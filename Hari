@@ -1,0 +1,16 @@
+sudo apt update && sudo apt install -y docker.io && sudo systemctl start docker && sudo systemctl enable docker && docker pull sonarqube:latest && docker run -d --name sonarqube -p 9000:9000 sonarqube:latest
+
+sudo apt update && sudo apt install -y docker.io
+
+sudo systemctl start docker
+sudo systemctl enable docker
+
+sudo usermod -aG docker $USER
+newgrp docker
+
+docker pull sonarqube:latest
+
+docker run -d --name sonarqube -p 9000:9000 sonarqube:latest
+
+docker ps
+docker logs -f sonarqube
