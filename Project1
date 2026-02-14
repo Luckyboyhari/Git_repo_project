@@ -158,7 +158,7 @@ To Build Ecommerce:
 >> systemctl restart tomcat10
 >> sudo cp target/EcommerceApp.war /var/lib/tomcat10/webapps/
 >> sudo systemctl restart tomcat10
->> to run  http://<EC2-PUBLIC-IP>:8080/EcommerceApp
+>> to run  http://<EC2-PUBLIC-IP>:8081/EcommerceApp
 In sonar website generate token and copy some where
 In Jenkins -> tools -> maven add 
 Then create new item with Ecommerce-CICD in pipeline 
