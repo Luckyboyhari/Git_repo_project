@@ -1,0 +1,121 @@
+COMPLETE EKS + IAM CLEANUP COMMANDS (COPY THIS)
+🔹 1️⃣ Check Existing EKS Clusters
+aws eks list-clusters --region us-east-1
+🔹 2️⃣ If Cluster Exists – List Node Groups
+
+Replace <cluster-name> with your cluster name.
+
+aws eks list-nodegroups \
+  --cluster-name <cluster-name> \
+  --region us-east-1
+🔹 3️⃣ Delete Node Group (VERY IMPORTANT FIRST)
+
+Replace <cluster-name> and <nodegroup-name>
+
+aws eks delete-nodegroup \
+  --cluster-name <cluster-name> \
+  --nodegroup-name <nodegroup-name> \
+  --region us-east-1
+
+Wait until status becomes DELETED
+
+Check status:
+
+aws eks describe-nodegroup \
+  --cluster-name <cluster-name> \
+  --nodegroup-name <nodegroup-name> \
+  --region us-east-1
+🔹 4️⃣ Delete EKS Cluster
+aws eks delete-cluster \
+  --name <cluster-name> \
+  --region us-east-1
+
+Verify:
+
+aws eks list-clusters --region us-east-1
+🔥 IAM ROLE CLEANUP
+🔹 5️⃣ Check IAM Roles
+aws iam list-roles | grep eks
+🔹 6️⃣ Detach Cluster Role Policy
+aws iam list-attached-role-policies \
+  --role-name eks-cluster-cloud
+
+Detach:
+
+aws iam detach-role-policy \
+  --role-name eks-cluster-cloud \
+  --policy-arn arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+
+Delete role:
+
+aws iam delete-role \
+  --role-name eks-cluster-cloud
+🔹 7️⃣ Detach Node Group Role Policies
+
+Check attached policies:
+
+aws iam list-attached-role-policies \
+  --role-name eks-node-group-cloud
+
+Detach all three (run all):
+
+aws iam detach-role-policy \
+  --role-name eks-node-group-cloud \
+  --policy-arn arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+aws iam detach-role-policy \
+  --role-name eks-node-group-cloud \
+  --policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+aws iam detach-role-policy \
+  --role-name eks-node-group-cloud \
+  --policy-arn arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+
+Now delete role:
+
+aws iam delete-role \
+  --role-name eks-node-group-cloud
+🔹 8️⃣ Final Verification
+aws iam list-roles | grep eks
+aws eks list-clusters --region us-east-1
+
+If nothing prints → ✅ Everything Deleted Successfully
+
+🚀 After Cleanup – Run Terraform Fresh
+
+Go to your Terraform folder:
+
+terraform init
+terraform apply
+💡 VERY IMPORTANT (DevOps Real Practice)
+
+Before deleting project folder or EC2:
+
+Always run:
+
+terraform destroy
+
+Better approach:
+
+Use S3 backend
+
+Use DynamoDB locking
+
+Never delete terraform.tfstate manually
+
+
+Copy-Paste These Exact Commands
+
+Detach all three policies one by one:
+
+aws iam detach-role-policy --role-name eks-node-group-cloud --policy-arn arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+aws iam detach-role-policy --role-name eks-node-group-cloud --policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+aws iam detach-role-policy --role-name eks-node-group-cloud --policy-arn arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+✅ Verify It Is Empty
+aws iam list-attached-role-policies --role-name eks-node-group-cloud
+
+It should return:
+
+"AttachedPolicies": []
+✅ Now Delete the Role
+aws iam delete-role --role-name eks-node-group-cloud
+✅ Then Run Terraform Again
+terraform apply
