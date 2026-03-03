@@ -1,3 +1,5 @@
+c7i-flex.large
+just do terraform destroy -> terraform apply
 COMPLETE EKS + IAM CLEANUP COMMANDS (COPY THIS)
 🔹 1️⃣ Check Existing EKS Clusters
 aws eks list-clusters --region us-east-1
