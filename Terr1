@@ -1,0 +1,36 @@
+Install required packages
+Bash
+Copy code
+sudo apt update
+sudo apt install -y gnupg curl software-properties-common
+3️⃣ Add HashiCorp GPG key (Fix for NO_PUBKEY error)
+Bash
+Copy code
+curl -fsSL https://apt.releases.hashicorp.com/gpg | \
+sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+4️⃣ Add HashiCorp repository
+Bash
+Copy code
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com noble main" | \
+sudo tee /etc/apt/sources.list.d/hashicorp.list
+5️⃣ Update again
+Bash
+Copy code
+sudo apt update
+Now the GPG error should disappear.
+6️⃣ Install Terraform
+Bash
+Copy code
+sudo apt install terraform -y
+7️⃣ Verify Terraform
+Bash
+Copy code
+terraform -version
+Example output:
+Copy code
+
+Terraform v1.x.x
+8️⃣ Run your command again
+Bash
+Copy code
+terraform destroy
