@@ -1,3 +1,88 @@
+The error you’re seeing is not a Prometheus problem. The issue is with the wget command you used.
+
+The key error is:
+
+Warning: wildcards not supported in HTTP.
+ERROR 404: Not Found.
+
+You used:
+
+wget https://github.com/prometheus/prometheus/releases/latest/download/prometheus-*.linux-amd64.tar.gz
+
+wget cannot use * wildcards in URLs, so it fails with 404.
+
+
+---
+
+✅ Correct Way to Download Prometheus
+
+Use the exact file name.
+
+Example:
+
+wget https://github.com/prometheus/prometheus/releases/download/v3.10.0/prometheus-3.10.0.linux-amd64.tar.gz
+
+Then extract:
+
+tar -xvf prometheus-3.10.0.linux-amd64.tar.gz
+cd prometheus-3.10.0.linux-amd64
+
+Start Prometheus:
+
+./prometheus --config.file=prometheus.yml
+
+
+---
+
+✅ Verify Prometheus is Running
+
+Run:
+
+ps -ef | grep prometheus
+
+You should see a process like:
+
+./prometheus --config.file=prometheus.yml
+
+
+---
+
+🌐 Access the Web UI
+
+Open in browser:
+
+http://13.222.231.170:9090
+
+(Your AWS public IP)
+
+If it doesn’t open, allow the port:
+
+sudo ufw allow 9090
+
+or in AWS Security Group allow:
+
+Type: Custom TCP
+Port: 9090
+Source: 0.0.0.0/0
+
+
+---
+
+⚡ Much Easier Way (Recommended in Kubernetes)
+
+Since you are already in a Kubernetes environment, the fastest method is using Helm.
+
+Install Prometheus in 2 commands:
+
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm install prometheus prometheus-community/prometheus
+
+
+---
+
+✅ If you want, I can also show the best way to install Prometheus for your Kubernetes cluster (used in DevOps interviews):
+
+Prometheus + Grafana + Node Exporter setup in 10 minutes.
 Below is the Step-by-Step detailed explanation to complete Question 2: Integrate Prometheus and Grafana Monitoring for the Super Mario Kubernetes Deployment.
 This assumes you already completed Question 1 (EKS cluster + Super Mario deployment) from your document .
 Here’s a quick way to set up Prometheus for basic monitoring on Linux (fastest method using a single binary). This works on most servers like Ubuntu, Debian, or CentOS.
