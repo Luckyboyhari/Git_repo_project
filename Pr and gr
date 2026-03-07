@@ -1,6 +1,137 @@
 Below is the Step-by-Step detailed explanation to complete Question 2: Integrate Prometheus and Grafana Monitoring for the Super Mario Kubernetes Deployment.
 This assumes you already completed Question 1 (EKS cluster + Super Mario deployment) from your document .
+Here’s a quick way to set up Prometheus for basic monitoring on Linux (fastest method using a single binary). This works on most servers like Ubuntu, Debian, or CentOS.
 
+
+---
+
+Quick Prometheus Setup (5–10 minutes)
+
+1️⃣ Download Prometheus
+
+wget https://github.com/prometheus/prometheus/releases/latest/download/prometheus-*.linux-amd64.tar.gz
+
+Extract it:
+
+tar xvf prometheus-*.linux-amd64.tar.gz
+cd prometheus-*
+
+
+---
+
+2️⃣ Check files
+
+You should see something like:
+
+prometheus
+promtool
+prometheus.yml
+consoles/
+console_libraries/
+
+The main config file is prometheus.yml.
+
+
+---
+
+3️⃣ Start Prometheus
+
+Run:
+
+./prometheus --config.file=prometheus.yml
+
+You will see logs like:
+
+Server is ready to receive web requests.
+
+
+---
+
+4️⃣ Open Web UI
+
+Open your browser:
+
+http://localhost:9090
+
+You will see the Prometheus dashboard.
+
+
+---
+
+5️⃣ Test a Query
+
+In the query box try:
+
+up
+
+It should return:
+
+up{instance="localhost:9090",job="prometheus"} 1
+
+That means Prometheus is working.
+
+
+---
+
+Example Basic Config
+
+Edit prometheus.yml:
+
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+
+---
+
+Optional: Monitor Your Server
+
+Install Node Exporter:
+
+wget https://github.com/prometheus/node_exporter/releases/latest/download/node_exporter-*.linux-amd64.tar.gz
+tar xvf node_exporter-*.tar.gz
+cd node_exporter-*
+./node_exporter
+
+Then update prometheus.yml:
+
+- job_name: "node"
+  static_configs:
+    - targets: ["localhost:9100"]
+
+Restart Prometheus.
+
+Now you can query:
+
+node_cpu_seconds_total
+node_memory_MemAvailable_bytes
+
+
+---
+
+Production Tip
+
+Usually Prometheus is run with Docker or Kubernetes in modern setups.
+
+
+---
+
+✅ If you want, I can also show:
+
+Prometheus + Grafana full setup (10 min)
+
+Docker one-command setup
+
+How to monitor Spring Boot / Java apps
+
+Kubernetes Prometheus setup
+
+
+Just tell me. 🚀
 
 ---
 
